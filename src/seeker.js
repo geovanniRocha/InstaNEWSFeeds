@@ -1,7 +1,10 @@
 let Parser = require('rss-parser');
 const _ = require("lodash")
 var knex = require('./db')
-let parser = new Parser();
+const sha1 = require("SHA1")
+let parser = new Parser({
+    headers: {'charset':'UTF-8'},
+  });
 
  
  (async () => {
@@ -16,23 +19,26 @@ let parser = new Parser();
     //.where("idfeed", '21') // REMOVER ESSA LINHA PARA TODOS
     .timeout(1000)
     .then(db=>{
-        _.each(db, async item =>{
-            this.feed = await parser.parseURL(item.url);   
-            _.each(this.feed.items,itemRSS => { 
-                console.log(itemRSS.date)
-                data = {
-                    title: itemRSS.title.toString("utf8"),
-                    description :itemRSS.content.toString("utf8"),
-                    url : itemRSS.link.toString("utf8"),
-                    date: itemRSS.isoDate,
-                    feed_idfeed : item.idfeed
-                }
-                knex.select().from('feed').where('url', data.url).timeout(1000).then(e=>{
-                    console.log(e)
-                })
-                knex("news").insert(data) 
-               
-            });
+        _.each(db, item =>{            
+            _.each(db, async e=>{
+                try{
+                    global.feed = await parser.parseURL(item.url); 
+                }catch(e){ }
+                _.each(global.feed.items,itemRSS => {
+                    
+                    data = {
+                        title: itemRSS.title.toString("utf8"),
+                        description :itemRSS.contentSnippet.toString("utf8"),
+                        url : itemRSS.link.toString("utf8"),
+                        date: itemRSS.isoDate,
+                        feed_idfeed : item.idfeed,
+                        urlHash : SHA1(url)
+                    }
+                    //console.log(data)
+                    if(data)
+                        knex("news").insert(data).then()
+                });
+            }) 
             return;
         })     
     })
