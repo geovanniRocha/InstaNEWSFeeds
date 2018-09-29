@@ -1,8 +1,10 @@
 let Parser = require('rss-parser');
 const _ = require("lodash")
 var knex = require('./db')
-const sha1 = require("SHA1")
-let parser = new Parser({
+var SHA1 = require("SHA1")
+var sanitizeHtml = require('sanitize-html');
+
+var parser = new Parser({
     headers: {'charset':'UTF-8'},
   });
 
@@ -24,20 +26,20 @@ let parser = new Parser({
                 try{
                     global.feed = await parser.parseURL(item.url); 
                 }catch(e){ }
-                _.each(global.feed.items,itemRSS => {
-                    
-                    data = {
-                        title: itemRSS.title.toString("utf8"),
-                        description :itemRSS.contentSnippet.toString("utf8"),
-                        url : itemRSS.link.toString("utf8"),
-                        date: itemRSS.isoDate,
-                        feed_idfeed : item.idfeed,
-                        urlHash : SHA1(url)
-                    }
-                    //console.log(data)
-                    if(data)
-                        knex("news").insert(data).then()
-                });
+                if(global.feed.items)
+                    _.each(global.feed.items,itemRSS => {                        
+                        data = {
+                            title: itemRSS.title.toString("utf8"),
+                            description :sanitizeHtml(itemRSS.contentSnippet.toString("utf8")),
+                            url : itemRSS.link.toString("utf8"),
+                            date: itemRSS.isoDate,
+                            feed_idfeed : item.idfeed
+                            //,urlHash : SHA1(url)
+                        }
+                        //console.log(data)
+                        if(data)
+                            knex("news").insert(data).then()
+                    });
             }) 
             return;
         })     
