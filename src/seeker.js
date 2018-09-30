@@ -21,27 +21,45 @@ var parser = new Parser({
     //.where("idfeed", '21') // REMOVER ESSA LINHA PARA TODOS
     .timeout(1000)
     .then(db=>{
-        _.each(db, item =>{            
-            _.each(db, async e=>{
+            _.each(db, async e =>{
                 try{
-                    global.feed = await parser.parseURL(item.url); 
+                    feed = await parser.parseURL(e.url); 
+                    console.log(feed)
+                     
+                        _.each(feed.items,itemRSS => {       
+                            console.log('each')                 
+                            var data = {
+                                title: itemRSS.title,
+                                description :sanitizeHtml(itemRSS.contentSnippet),
+                                url : itemRSS.link,
+                                date: itemRSS.isoDate,
+                                feed_idfeed : e.idfeed
+                                //,urlHash : SHA1(url)
+                            } 
+                            console.log("Antes do insert")
+                            knex.from('news')
+                            .select(['news.url']) 
+                            .where('news.title', data.title)
+                            .bind(data).then(rSet=>{
+                                console.log(rSet) 
+                                console.log(data)
+                                if(_.isEmpty(rSet)&& rSet != undefined){                                    
+                                    console.log("NAo existe, insirindo")
+                                    if(data)
+                                        knex("news").insert(data).then()
+                                    return;
+                                }
+                            });
+                            console.log("done")
+                             return;
+                        });
+                        console.log("asd")
+                        return;
                 }catch(e){ }
-                if(global.feed.items)
-                    _.each(global.feed.items,itemRSS => {                        
-                        data = {
-                            title: itemRSS.title.toString("utf8"),
-                            description :sanitizeHtml(itemRSS.contentSnippet.toString("utf8")),
-                            url : itemRSS.link.toString("utf8"),
-                            date: itemRSS.isoDate,
-                            feed_idfeed : item.idfeed
-                            //,urlHash : SHA1(url)
-                        }
-                        //console.log(data)
-                        if(data)
-                            knex("news").insert(data).then()
-                    });
+                
             }) 
             return;
-        })     
+        
     })
 })();
+return;
