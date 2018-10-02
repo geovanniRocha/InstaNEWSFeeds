@@ -39,7 +39,7 @@ var parser = new Parser({
                             console.log("Antes do insert")
                             knex.from('news')
                             .select(['news.url']) 
-                            .where('news.title', data.title)
+                            .where('news.url', data.url)
                             .bind(data).then(rSet=>{
                                 console.log(rSet) 
                                 console.log(data)
