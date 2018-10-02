@@ -10,7 +10,7 @@ var parser = new Parser({
 
  
  (async () => {
- 
+    var regex = new RegExp('(alt|title|src)=("[^"]*")'  , "i")
     // DESCOBRIR UM JEITO DE NAO INSERIR NO BANCO OS VALORES QUE JA EXISTEM, FAZER UM SELECT ANTES? MUITO PROCESSAMENTO PRA NADA, VER SE TEM COMO INSERT IFNOT?
 
     //Select all feeds
@@ -25,36 +25,42 @@ var parser = new Parser({
                 try{
                     feed = await parser.parseURL(e.url); 
                     console.log(feed)
-                     
-                        _.each(feed.items,itemRSS => {       
-                            console.log('each')                 
-                            var data = {
-                                title: itemRSS.title,
-                                description :sanitizeHtml(itemRSS.contentSnippet),
-                                url : itemRSS.link,
-                                date: itemRSS.isoDate,
-                                feed_idfeed : e.idfeed
-                                //,urlHash : SHA1(url)
-                            } 
-                            console.log("Antes do insert")
-                            knex.from('news')
-                            .select(['news.url']) 
-                            .where('news.url', data.url)
-                            .bind(data).then(rSet=>{
-                                console.log(rSet) 
-                                console.log(data)
-                                if(_.isEmpty(rSet)&& rSet != undefined){                                    
-                                    console.log("NAo existe, insirindo")
-                                    if(data)
-                                        knex("news").insert(data).then()
-                                    return;
-                                }
-                            });
-                            console.log("done")
-                             return;
+                    _.each(feed.items,itemRSS => {       
+                        console.log('each')                 
+                        var tb = regex.exec(itemRSS.content);
+                        if(tb){
+                            tb = tb[2].replace('"', "")
+                        }else{
+                            tb = "https://picsum.photos/600/300/?image=25"
+                        }
+                        var data = {
+                            title: itemRSS.title,
+                            description :sanitizeHtml(itemRSS.contentSnippet),
+                            url : itemRSS.link,
+                            date: itemRSS.isoDate,
+                            feed_idfeed : e.idfeed,
+                            thumbnail: tb
+                            //,urlHash : SHA1(url)
+                        } 
+                        console.log("Antes do insert")
+                        knex.from('news')
+                        .select(['news.url']) 
+                        .where('news.url', data.url)
+                        .bind(data).then(rSet=>{
+                            console.log(rSet) 
+                            console.log(data)
+                            if(_.isEmpty(rSet)&& rSet != undefined){                                    
+                                console.log("NAo existe, insirindo")
+                                if(data)
+                                    knex("news").insert(data).then()
+                                return;
+                            }
                         });
-                        console.log("asd")
-                        return;
+                        console.log("done")
+                            return;
+                    });
+                    console.log("asd")
+                    return;
                 }catch(e){ }
                 
             }) 
