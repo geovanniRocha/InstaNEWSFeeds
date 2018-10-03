@@ -1,8 +1,8 @@
 let Parser = require('rss-parser');
 const _ = require("lodash")
-var knex = require('./db')
-var SHA1 = require("SHA1")
+var knex = require('./db') 
 var sanitizeHtml = require('sanitize-html');
+var request = require("request")
 
 var parser = new Parser({
     headers: {'charset':'UTF-8'},
@@ -11,15 +11,9 @@ var parser = new Parser({
  
  (async () => {
     var regex = new RegExp('(alt|title|src)=("[^"]*")'  , "i")
-    // DESCOBRIR UM JEITO DE NAO INSERIR NO BANCO OS VALORES QUE JA EXISTEM, FAZER UM SELECT ANTES? MUITO PROCESSAMENTO PRA NADA, VER SE TEM COMO INSERT IFNOT?
+    
 
-    //Select all feeds
-    //foreach feed -> req url
-    //foreach url -> insert news to DB with feedID
-
-    knex.select().from('feed')
-    //.where("idfeed", '21') // REMOVER ESSA LINHA PARA TODOS
-    .timeout(1000)
+    knex.select().from('feed').timeout(1000)
     .then(db=>{
             _.each(db, async e =>{
                 try{
@@ -28,10 +22,10 @@ var parser = new Parser({
                     _.each(feed.items,itemRSS => {       
                         console.log('each')                 
                         var tb = regex.exec(itemRSS.content);
-                        if(tb){
-                            tb = tb[2].replace('"', "")
+                        if(tb ){
+                            tb  = tb[2].replace('"', "")
                         }else{
-                            tb = "https://picsum.photos/600/300/?image=25"
+                            tb  = "https://picsum.photos/600/300/?image=25"
                         }
                         var data = {
                             title: itemRSS.title,
@@ -39,8 +33,7 @@ var parser = new Parser({
                             url : itemRSS.link,
                             date: itemRSS.isoDate,
                             feed_idfeed : e.idfeed,
-                            thumbnail: tb
-                            //,urlHash : SHA1(url)
+                            thumbnail: tb  
                         } 
                         console.log("Antes do insert")
                         knex.from('news')
@@ -67,5 +60,33 @@ var parser = new Parser({
             return;
         
     })
+
+
+request('https://newsapi.org/v2/top-headlines?country=br&apiKey=66741bed85f64f74a748e4330fa88b11',
+{ json: true }, (err, res, body) => {
+    if (err) { return console.log(err); }    
+    _.each(body.articles, function (e) {
+
+        if(e.title == null ||e.content == null ||e.url == null ||e.publishedAt == null ||e.urlToImage == null ){
+            console.log("Campos faltando, Ignorar")
+            return;
+        }
+        console.log("Campos Ok")
+        var data = {
+            title: e.title,
+            description :e.content,
+            url : e.url,
+            date: e.publishAt,
+            feed_idfeed : 28,
+            thubnail:e.urlToImage
+        } 
+        if(data)
+            knex("news").insert(data).then()
+        return;
+        
+         
+    })    
+});
+
 })();
 return;
