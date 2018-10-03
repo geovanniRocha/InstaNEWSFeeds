@@ -38,7 +38,7 @@ var parser = new Parser({
          
     })    
 
-/*
+
     knex.select().from('feed').timeout(1000)
     .then(db=>{
             _.each(db, async e =>{
@@ -89,7 +89,6 @@ var parser = new Parser({
             return;
         
     })
-*/
 
 
 });
