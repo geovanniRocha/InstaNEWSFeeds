@@ -11,12 +11,40 @@ var parser = new Parser({
  
  (async () => {
     var regex = new RegExp('(alt|title|src)=("[^"]*")'  , "i")
-    
+    request('https://newsapi.org/v2/top-headlines?country=br&apiKey=66741bed85f64f74a748e4330fa88b11',
+{ json: true }, (err, res, body) => {
+    if (err) { return console.log(err); }    
+    _.each(body.articles, function (e) {
+
+        if(e.title == null ||e.content == null ||e.url == null ||e.publishedAt == null ||e.urlToImage == null ){
+            console.log("Campos faltando, Ignorar")
+            return;
+        }
+        console.log("Campos Ok")
+        var data = {
+            title: e.title,
+            description :e.content,
+            url : e.url,
+            date: e.publishAt,
+            feed_idfeed : 88,
+            thumbnail:e.urlToImage
+        } 
+        if(data)
+            knex("news").insert(data).then().error(e=>{
+                console.log(e)
+            })
+        return;
+        
+         
+    })    
 
     knex.select().from('feed').timeout(1000)
     .then(db=>{
             _.each(db, async e =>{
                 try{
+                    if(e.url == "RESTAPI"){
+                        return;
+                    }
                     feed = await parser.parseURL(e.url); 
                     console.log(feed)
                     _.each(feed.items,itemRSS => {       
@@ -62,30 +90,7 @@ var parser = new Parser({
     })
 
 
-request('https://newsapi.org/v2/top-headlines?country=br&apiKey=66741bed85f64f74a748e4330fa88b11',
-{ json: true }, (err, res, body) => {
-    if (err) { return console.log(err); }    
-    _.each(body.articles, function (e) {
 
-        if(e.title == null ||e.content == null ||e.url == null ||e.publishedAt == null ||e.urlToImage == null ){
-            console.log("Campos faltando, Ignorar")
-            return;
-        }
-        console.log("Campos Ok")
-        var data = {
-            title: e.title,
-            description :e.content,
-            url : e.url,
-            date: e.publishAt,
-            feed_idfeed : 28,
-            thubnail:e.urlToImage
-        } 
-        if(data)
-            knex("news").insert(data).then()
-        return;
-        
-         
-    })    
 });
 
 })();
