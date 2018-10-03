@@ -25,7 +25,7 @@ var parser = new Parser({
             title: e.title,
             description :e.content,
             url : e.url,
-            date: e.publishAt,
+            date: new Date(e.publishedAt).toISOString(),
             feed_idfeed : 88,
             thumbnail:e.urlToImage
         } 
@@ -38,6 +38,7 @@ var parser = new Parser({
          
     })    
 
+/*
     knex.select().from('feed').timeout(1000)
     .then(db=>{
             _.each(db, async e =>{
@@ -59,7 +60,7 @@ var parser = new Parser({
                             title: itemRSS.title,
                             description :sanitizeHtml(itemRSS.contentSnippet),
                             url : itemRSS.link,
-                            date: itemRSS.isoDate,
+                            date: new Date(itemRSS.isoDate).toISOString(),
                             feed_idfeed : e.idfeed,
                             thumbnail: tb  
                         } 
@@ -88,7 +89,7 @@ var parser = new Parser({
             return;
         
     })
-
+*/
 
 
 });
