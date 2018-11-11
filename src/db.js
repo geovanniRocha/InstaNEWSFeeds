@@ -1,13 +1,12 @@
-//Configuracao do Knex, exportar o modulo inteiro para nao repetir
-//a configuracao da conexao com o sql
+ 
 var knex = require('knex')({
     client: 'mysql',
     version: '5.7',
     connection: {
-      host : '127.0.0.1',
-      user : 'root',
-      password : '',
-      database : 'instanews2'
+      host : 'ec2-54-191-117-101.us-west-2.compute.amazonaws.com',
+      user : 'instanews',
+      password : 'iePheb7jBoorael5puL8Ez3u',
+      database : 'instanews'
     }
   });
 
