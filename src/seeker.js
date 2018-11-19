@@ -16,14 +16,14 @@ request('https://newsapi.org/v2/top-headlines?country=br&apiKey=66741bed85f64f74
     if (err) { return console.log(err); }    
     _.each(body.articles, function (e) {
 
-        if(e.title == null ||e.content == null ||e.url == null ||e.publishedAt == null ||e.urlToImage == null ){
+        if(e.title == null ||e.content == null ||e.newsurl == null ||e.publishedAt == null ||e.urlToImage == null ){
             return;
         }
         //console.log("Campos Ok")
         var data = {
             title: e.title,
             description :e.content,
-            url : e.url,
+            newsurl : e.newsurl,
             date: new Date(e.publishedAt).toISOString().slice(0, 19).replace("T"," "),
             feed_idfeed : 88,
             thumbnail:e.urlToImage
@@ -82,7 +82,7 @@ request('https://newsapi.org/v2/top-headlines?country=br&apiKey=66741bed85f64f74
                         });
                         //console.log("done")
                             return;
-                    });
+                    });url
                     //console.log("asd")
                     return;
                 }catch(e){ }
