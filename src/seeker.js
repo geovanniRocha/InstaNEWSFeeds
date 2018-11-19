@@ -67,7 +67,8 @@ request('https://newsapi.org/v2/top-headlines?country=br&apiKey=66741bed85f64f74
                         knex.from('news')
                         .select(['news.url']) 
                         .where('news.url', data.url)
-                        .bind(data).then(rSet=>{
+                        //.bind(data)
+						.then(rSet=>{
                             //console.log(rSet) 
                             //console.log(data)
                             if(_.isEmpty(rSet)&& rSet != undefined){                                    

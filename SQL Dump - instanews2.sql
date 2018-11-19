@@ -58,7 +58,7 @@ INSERT INTO `categories` (`idcategories`, `name`) VALUES
 CREATE TABLE `feed` (
   `idfeed` int(11) NOT NULL,
   `name` varchar(45) COLLATE utf8mb4_bin DEFAULT NULL,
-  `url` varchar(45) COLLATE utf8mb4_bin DEFAULT NULL,
+  `url` varchar(450) COLLATE utf8mb4_bin DEFAULT NULL,
   `categories_idcategories` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -67,13 +67,13 @@ CREATE TABLE `feed` (
 --
 
 INSERT INTO `feed` (`idfeed`, `name`, `url`, `categories_idcategories`) VALUES
-(66, 'Folha Esporte ', ' http://feeds.folha.uol.com.br/esporte/rss091', 21),
-(67, 'Folha Ciencia ', '  http://feeds.folha.uol.com.br/ciencia/rss09', 23),
+(66, 'Folha Esporte ', ' http://feeds.folha.uol.com.br/esporte/rss091.xml', 21),
+(67, 'Folha Ciencia ', '  http://feeds.folha.uol.com.br/ciencia/rss09.xml', 23),
 (68, 'Folha Tec ', ' http://feeds.folha.uol.com.br/tec/rss091.xml', 17),
-(69, 'Folha Mercado ', ' http://feeds.folha.uol.com.br/mercado/rss091', 25),
-(70, 'InfoMoney Politica ', ' https://www.infomoney.com.br/mercados/politi', 27),
-(71, 'InfoMoney Ultimas Noticias ', ' https://www.infomoney.com.br/ultimas-noticia', 28),
-(72, 'InfoMoney Acoes e Indices ', ' https://www.infomoney.com.br/mercados/acoes-', 25),
+(69, 'Folha Mercado ', ' http://feeds.folha.uol.com.br/mercado/rss091.xml', 25),
+(70, 'InfoMoney Politica ', ' https://www.infomoney.com.br/mercados/politica/rss', 27),
+(71, 'InfoMoney Ultimas Noticias ', 'https://www.infomoney.com.br/ultimas-noticias/rss', 28),
+(72, 'InfoMoney Acoes e Indices ', 'https://www.infomoney.com.br/mercados/acoes-e-indices/rss', 25),
 (73, 'Exame ', ' https://exame.abril.com.br/feed/ ', 20),
 (75, 'IGN ', ' http://feeds.ign.com/ign/games-all', 18),
 (76, 'Steam ', ' http://www.steampowered.com/rss.xml', 18),
@@ -84,10 +84,10 @@ INSERT INTO `feed` (`idfeed`, `name`, `url`, `categories_idcategories`) VALUES
 (81, 'G1 Brasil ', '  http://g1.globo.com/dynamo/brasil/rss2.xml ', 20),
 (82, 'G1 Educacao ', ' http://g1.globo.com/dynamo/brasil/rss2.xml ', 20),
 (83, 'G1 Economia ', ' http://g1.globo.com/dynamo/economia/rss2.xml', 19),
-(84, 'G1 Tech & Games ', ' http://g1.globo.com/dynamo/tecnologia/rss2.x', 17),
+(84, 'G1 Tech & Games ', ' http://g1.globo.com/dynamo/tecnologia/rss2.xml', 17),
 (85, 'G1 Musica ', ' http://g1.globo.com/dynamo/musica/rss2.xml', 20),
 (86, 'AutoEsporte ', ' http://g1.globo.com/dynamo/carros/rss2.xml', 22),
-(87, 'G1 Ciencia e Saude ', ' http://g1.globo.com/dynamo/ciencia-e-saude/r', 23);
+(87, 'G1 Ciencia e Saude ', ' http://g1.globo.com/dynamo/ciencia-e-saude/rss2.xml', 23);
 
 -- --------------------------------------------------------
 
@@ -99,7 +99,7 @@ CREATE TABLE `news` (
   `idnews` int(11) NOT NULL,
   `title` varchar(45) COLLATE utf8mb4_bin DEFAULT NULL,
   `description` text COLLATE utf8mb4_bin,
-  `url` varchar(45) COLLATE utf8mb4_bin DEFAULT NULL,
+  `newsurl` varchar(45) COLLATE utf8mb4_bin DEFAULT NULL,
   `date` datetime DEFAULT CURRENT_TIMESTAMP,
   `feed_idfeed` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
@@ -108,7 +108,7 @@ CREATE TABLE `news` (
 -- Extraindo dados da tabela `news`
 --
 
-INSERT INTO `news` (`idnews`, `title`, `description`, `url`, `date`, `feed_idfeed`) VALUES
+INSERT INTO `news` (`idnews`, `title`, `description`, `newsurl`, `date`, `feed_idfeed`) VALUES
 (1, 'Spotify tenta limitar compartilhamento de red', 'O Spotify lan�ou mais uma cruzada para tentar acabar com amigos e familiares que dividem o plano premium familiar do aplicativo.\nLeia mais (09/30/2018 - 02h00)', 'https://redir.folha.com.br/redir/online/tec/r', '2018-09-30 05:00:00', 68),
 (2, 'Na loja Amazon Go � s� pegar os produtos e ir', 'Houve um tempo em que entrar numa loja, retirar um produto da prateleira, colocar na bolsa e sair pela porta da frente era furto, crime pass�vel de san��o ou pris�o em qualquer lugar do mundo.\nLeia mais (09/30/2018 - 02h00)', 'https://redir.folha.com.br/redir/online/tec/r', '2018-09-30 05:00:00', 68),
 (3, 'Elon Musk � for�ado a deixar presid�ncia do c', 'O presidente da Tesla, Elon Musk, ter� de deixar o cargo de presidente do conselho de administra��o da companhia por tr�s anos, ap�s a acusa��o de fraude movida pela SEC, ag�ncia reguladora do setor financeiro nos Estados Unidos, contra o executivo. \nLeia mais (09/29/2018 - 19h58)', 'https://redir.folha.com.br/redir/online/tec/r', '2018-09-29 22:58:00', 68),
@@ -815,30 +815,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`idusers`, `email`, `token`, `lastUpdate`) VALUES
-(1, 'thopkynson0@intel.com', '91c08f9e80abdccbf047547c5c8f86cea3ce997e', '2017-11-11 05:41:04'),
-(2, 'rshuard1@tripod.com', '62e7c1808232dea731a0c0d96669aba97bb5c779', '2018-04-20 09:19:30'),
-(3, 'bsomerfield2@japanpost.jp', '4441a88de5592b9b69497427b57624c73db2fbdf', '2018-02-18 18:25:27'),
-(4, 'cveracruysse3@vimeo.com', '5540f49c145d42664cc370513926082f32eea41e', '2018-02-27 11:56:29'),
-(5, 'apickavant4@printfriendly.com', '634629daabe5d1e33d1ad305d8f547b08de85a7c', '2018-08-31 17:40:29'),
-(6, 'vjans5@utexas.edu', 'bd96469d85b3c5ecb158d86fd6673c2d048a3959', '2018-07-24 16:50:01'),
-(7, 'lblais6@accuweather.com', '6fd3e52717350a9c49e6417efa43b84b0a15fd5e', '2017-10-27 07:29:27'),
-(8, 'adudenie7@discuz.net', '54316c62829fdb04bfb4082e0200373d075e7ca5', '2018-02-10 01:01:15'),
-(9, 'cryburn8@wikipedia.org', 'f6e794dd26130748d8ae2016ef758121dbcb40e2', '2018-04-28 02:24:50'),
-(10, 'scoxhell9@springer.com', '35483f1e8aa8ee08c56f93e3a27b362f14e46357', '2018-09-05 17:47:37'),
-(11, 'mdonelda@addtoany.com', 'b9c3a635ec11c67459cb65ea0f8c733cf1914fa4', '2017-12-11 20:06:41'),
-(12, 'atootinb@yahoo.co.jp', '69baeca6b818260e95078b37339a638fee41f8b4', '2017-12-29 11:21:26'),
-(13, 'mstubbertc@sogou.com', '7d9430779a4302bb2bde846feb53d7f1def0ca65', '2018-05-02 08:38:58'),
-(14, 'aengalld@businessinsider.com', 'efde35ecdf18aad1b50891e7d9fd659507d9f9ca', '2018-05-09 22:04:29'),
-(15, 'mbulfite@google.com.br', '82e4f3cd70e2cd600a45b2002452b24f6232549d', '2017-09-28 10:57:51'),
-(16, 'gscrannagef@usgs.gov', 'c846592bf3baff40db04f8f264676236705456ba', '2018-01-11 19:52:23'),
-(17, 'ccindereyg@cmu.edu', 'e62b95c035ff9fd6ca97d0d1cb9be73d34dd3686', '2018-02-19 01:35:33'),
-(18, 'sdannielh@tmall.com', '19cd2bac1c4f804b84a07271513b2e44a7152b3a', '2018-07-31 02:06:40'),
-(19, 'ebolesworthi@tripadvisor.com', '90a4e7634664f57c6a2c44f540527acdd389d24a', '2017-09-15 04:55:57'),
-(20, 'clauksj@imdb.com', 'f11fc991b3580fd51d2ef827d94a1e21c5446fb5', '2018-02-03 06:02:52'),
-(22, 'a@b.c', 'e2d6a40c8b4d3e6a2779ba1802ef29d13940a051', '2018-09-15 15:37:37'),
-(23, 'a@b.com', '1022b0c3a1d9a6409ae0dd2364fdcfe41f63ae22', '2018-09-15 15:38:32'),
-(26, 'geovanni.rocha@gmail.com', '26f4c4822bf9df273c6c86b7a2f3c4e9b54687df', '0000-00-00 00:00:00');
-
+(1, 'geovanniRocha@.gmail.com', '91c08f9e80abdccbf047547c5c8f86cea3ce997e', '2017-11-11 05:41:04'),
+(2, 'SeuEmail@loremIpsun.com', '62e7c1808232dea731a0c0d96669aba97bb5c779', '2018-04-20 09:19:30'),
+(3, 'Jose@hotmail.jp', '4441a88de5592b9b69497427b57624c73db2fbdf', '2018-02-18 18:25:27'),
+ 
 -- --------------------------------------------------------
 
 --
@@ -862,24 +842,13 @@ INSERT INTO `users_has_categories` (`users_idusers`, `categories_idcategories`) 
 (2, 20),
 (2, 21),
 (2, 23),
-(2, 25),
-(5, 3),
-(5, 16),
-(8, 2),
-(9, 12),
-(9, 16),
-(10, 10),
-(11, 3),
-(12, 8),
-(12, 11),
-(12, 12),
-(12, 15),
-(13, 14),
-(15, 12),
-(17, 13),
-(18, 12),
-(620000000, 21),
-(620000000, 23);
+(2, 25), 
+(3, 19),
+(3, 20),
+(3, 21),
+(3, 23),
+(3, 25) 
+
 
 --
 -- Indexes for dumped tables
